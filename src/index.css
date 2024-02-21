@@ -1,0 +1,38 @@
+.search {
+  border-radius: 12px;
+  height: 40px;
+  margin-bottom: 36px;
+  max-width: 600px;
+  width: 100%;
+  padding: 0 12px;
+}
+
+.pokemons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px;
+  justify-content: space-between;
+}
+
+.pokemon {
+  padding: 12px;
+  border: 1px solid #efefef;
+}
+
+.new-feature {
+  position: fixed;
+  bottom: 0;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  background: red;
+  padding: 12px;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-content: flex-end;
+  margin-bottom: 48px;
+}
