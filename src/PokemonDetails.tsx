@@ -1,28 +1,41 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { PokemonDetails as PokemonDetailsModel } from './models';
+import axios from 'axios';
+import { PokemonDetailsFromApi, PokemonDetails as PokemonDetailsModel } from './models';
 
-const MI_POKEMON: PokemonDetailsModel = {
-  id: 3,
-  abilities: ['Impactrueno', 'ataque rápido'],
-  height: 34,
-  name: 'Jose',
-  images: {
-    femaleImageUrl:
-      'https://media.istockphoto.com/id/1345472306/es/foto/un-hermoso-gatito-de-jengibre-se-sienta-en-botes-humanos-al-atardecer-al-aire-libre-el.jpg?s=612x612&w=0&k=20&c=cFZudSbqRlHQkmbLhThMfrYau9e_s2YmRUfC2oz-3hs=',
-    maleImageUrl:
-      'https://img.freepik.com/foto-gratis/adorable-ilustracion-gatitos-jugando-bosque-generative-ai_260559-483.jpg',
-    shinyFemaleImageUrl:
-      'https://media.istockphoto.com/id/1345472306/es/foto/un-hermoso-gatito-de-jengibre-se-sienta-en-botes-humanos-al-atardecer-al-aire-libre-el.jpg?s=612x612&w=0&k=20&c=cFZudSbqRlHQkmbLhThMfrYau9e_s2YmRUfC2oz-3hs=',
-    shinyMaleImageUrl:
-      'https://img.freepik.com/foto-gratis/adorable-ilustracion-gatitos-jugando-bosque-generative-ai_260559-483.jpg'
-  },
-  weight: 6
+const mapPokemonDetailsFromApiToPokemonDetails = (dataFromApi: PokemonDetailsFromApi): PokemonDetailsModel => {
+  const { abilities, height, id, name, sprites, weight } = dataFromApi;
+
+  return {
+    height,
+    id,
+    weight,
+    name,
+    abilities: abilities.map((abilityFromApi) => {
+      return abilityFromApi.ability.name;
+    }),
+    images: {
+      femaleImageUrl: sprites.front_female,
+      imageUrl: sprites.front_default,
+      shinyFemaleImageUrl: sprites.front_shiny_female,
+      shinyImageUrl: sprites.front_shiny
+    }
+  };
 };
 
 export const PokemonDetails = () => {
-  const [pokemonDetails, setPokemonDetails] = useState<PokemonDetailsModel>(MI_POKEMON);
+  const [pokemonDetails, setPokemonDetails] = useState<PokemonDetailsModel>();
   const { pokemonId } = useParams();
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const response = await axios.get<PokemonDetailsFromApi>(`https://pokeapi.co/api/v2/pokemon/${pokemonId}/`);
+      const mappedDetails = mapPokemonDetailsFromApiToPokemonDetails(response.data);
+      setPokemonDetails(mappedDetails);
+    };
+
+    fetchDetails();
+  }, []);
 
   if (!pokemonDetails) {
     return <>Loading pokemon</>;
@@ -43,8 +56,10 @@ export const PokemonDetails = () => {
       <p>
         <strong>Habilidades:</strong> {pokemonDetails.height}
       </p>
-      <img src={pokemonDetails.images.maleImageUrl} />
-      <img src={pokemonDetails.images.femaleImageUrl} />
+      <img src={pokemonDetails.images.imageUrl} />
+      {pokemonDetails.images.femaleImageUrl && <img src={pokemonDetails.images.femaleImageUrl} />}
+      {pokemonDetails.images.shinyFemaleImageUrl && <img src={pokemonDetails.images.shinyFemaleImageUrl} />}
+      <img src={pokemonDetails.images.shinyImageUrl} />
     </div>
   );
 };

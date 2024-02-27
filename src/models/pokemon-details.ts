@@ -5,10 +5,10 @@ export interface PokemonDetails {
   weight: number;
   abilities: string[];
   images: {
-    maleImageUrl: string;
-    femaleImageUrl: string;
-    shinyMaleImageUrl: string;
-    shinyFemaleImageUrl: string;
+    imageUrl: string;
+    femaleImageUrl?: string;
+    shinyImageUrl: string;
+    shinyFemaleImageUrl?: string;
   };
 }
 
@@ -32,7 +32,7 @@ export interface PokemonDetailsFromApi {
   sprites: {
     front_default: string;
     front_shiny: string;
-    front_female: string;
-    front_shiny_female: string;
+    front_female?: string;
+    front_shiny_female?: string;
   };
 }
