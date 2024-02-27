@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { NewFeatureAlert } from './NewFeatureAlert';
 import axios from 'axios';
-import { Pokemon, PokemonFromApi } from './models';
+import { PokemonListItem, PokemonListItemFromApi } from './models';
 import './pokemon-list.css';
 
 export const apiURL = 'https://pokeapi.co/api/v2/pokemon?limit=151';
@@ -11,8 +11,8 @@ export const getImage = (number: number): string => {
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png`;
 };
 
-export const mapPokemonApiToPokemonView = (pokemon: PokemonFromApi[]): Pokemon[] => {
-  return pokemon.map((pokemonItem: PokemonFromApi, index: number) => {
+export const mapPokemonApiToPokemonView = (pokemon: PokemonListItemFromApi[]): PokemonListItem[] => {
+  return pokemon.map((pokemonItem: PokemonListItemFromApi, index: number) => {
     return {
       name: pokemonItem.name,
       imageUrl: getImage(index + 1),
@@ -23,10 +23,10 @@ export const mapPokemonApiToPokemonView = (pokemon: PokemonFromApi[]): Pokemon[]
 };
 
 export const PokemonList = () => {
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [pokemons, setPokemons] = useState<PokemonListItem[]>([]);
   const [hasDiscoveredFav, setHasDiscoveredFav] = useState(false);
 
-  //Necesitamos saber si el usuario ha hecho click alguna vez en algún pokemon
+  // Necesitamos saber si el usuario ha hecho click alguna vez en algún pokemon
   // Podríamos ver si hay algún pokemon marcado como fav
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const PokemonList = () => {
   const handlePokemonClick = (pokemonId: number) => {
     setHasDiscoveredFav(true);
 
-    const newPokemonsMap = pokemons.map((pokemonInfo: Pokemon) => {
+    const newPokemonsMap = pokemons.map((pokemonInfo: PokemonListItem) => {
       if (pokemonId === pokemonInfo.id) {
         const newPokemonInfo = { ...pokemonInfo };
         newPokemonInfo.isFav = !pokemonInfo.isFav;
@@ -59,7 +59,7 @@ export const PokemonList = () => {
   return (
     <div className="pokemons">
       {!hasDiscoveredFav && <NewFeatureAlert />}
-      {pokemons.map((pokemon: Pokemon) => (
+      {pokemons.map((pokemon: PokemonListItem) => (
         <Link key={pokemon.id} to={`/pokemon/${pokemon.name}`}>
           <div className="pokemon">
             <img src={pokemon.imageUrl} />
