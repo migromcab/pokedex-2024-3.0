@@ -1,3 +1,12 @@
+body {
+  background-color: rgb(179, 182, 184);
+}
+a {
+  text-decoration: none;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .search {
   border-radius: 12px;
   height: 40px;
@@ -8,15 +17,17 @@
 }
 
 .pokemons {
+  padding: 48px 0;
   display: flex;
   flex-wrap: wrap;
   gap: 36px;
-  justify-content: space-between;
 }
 
 .pokemon {
   padding: 12px;
-  border: 1px solid #efefef;
+  border: 3px solid #ce3636;
+  background-color: rgba(109, 109, 109, 0.405);
+  border-radius: 16px;
 }
 
 .new-feature {
@@ -25,14 +36,40 @@
   z-index: 10;
   left: 0;
   right: 0;
-  background: red;
+  background: #ce3636;
   padding: 12px;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .menu {
   display: flex;
-  align-items: center;
+  align-items: end;
   gap: 24px;
   justify-content: flex-end;
   margin-bottom: 48px;
+  background-color: #ce3636;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.input-searcher {
+  border: none;
+  padding: 16px;
+  border-radius: 5px;
+  width: 50%;
+  margin: 16px;
+}
+
+.selector {
+  border: none;
+  border-radius: 6px;
+  padding: 16px;
+  background-color: rgb(90, 84, 84);
+  color: white;
+}
+
+.toolbox {
+  display: flex;
+  justify-content: space-between;
 }
