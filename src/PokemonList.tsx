@@ -1,7 +1,8 @@
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, useMemo, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { NewFeatureAlert } from './NewFeatureAlert';
 import axios from 'axios';
+import { orderBy, sortBy } from 'lodash';
 import { PokemonListItem, PokemonListItemFromApi } from './models';
 import './pokemon-list.css';
 
@@ -22,29 +23,49 @@ export const mapPokemonApiToPokemonView = (pokemon: PokemonListItemFromApi[]): P
 
 export const PokemonList = () => {
   const [search, setSearch] = useState('');
+  const [name, setName] = useState('');
   const [limit, setLimit] = useState(50);
+  const [isOnlyFavs, setIsOnlyFavs] = useState(false);
   const [pokemons, setPokemons] = useState<PokemonListItem[]>([]);
   const [hasDiscoveredFav, setHasDiscoveredFav] = useState(false);
-  console.log(limit);
+  console.log('me estoy renderizando');
   // Necesitamos saber si el usuario ha hecho click alguna vez en algún pokemon
   // Podríamos ver si hay algún pokemon marcado como fav
 
-  const filteredPokemon = !search
-    ? pokemons
-    : pokemons.filter((pokemon) => {
-        const searchId = Number(search);
+  const filteredPokemon = useMemo(() => {
+    if (!search && !isOnlyFavs) {
+      return pokemons;
+    }
 
-        if (Number.isNaN(searchId)) {
-          return pokemon.name.includes(search);
-        }
+    const filtered = pokemons.filter((pokemon) => {
+      console.log('filtering');
+      if (isOnlyFavs && !pokemon.isFav) {
+        return false;
+      }
 
-        return pokemon.id === searchId;
-      });
+      if (!search) {
+        return true;
+      }
+
+      const searchId = Number(search);
+
+      if (Number.isNaN(searchId)) {
+        return pokemon.name.includes(search);
+      }
+
+      return pokemon.id === searchId;
+    });
+
+    if (!search) {
+      return filtered;
+    }
+
+    return orderBy(filtered, ['isFav', 'name'], ['desc', 'asc']);
+  }, [search, pokemons, isOnlyFavs]);
 
   useEffect(() => {
     const fetchPokemons = async () => {
       const apiURL = `https://pokeapi.co/api/v2/pokemon?limit=${limit}`;
-      console.log('llamando a la api');
       const response = await axios.get(apiURL);
       setPokemons(mapPokemonApiToPokemonView(response.data.results));
     };
@@ -80,12 +101,27 @@ export const PokemonList = () => {
     setLimit(Number(event.target.value));
   };
 
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const handleIsOnlyFavClick = () => {
+    setIsOnlyFavs(!isOnlyFavs);
+  };
+
   return (
     <div>
+      <div>
+        <input onChange={handleNameChange} value={name} placeholder="Tu nombre de entrenador/a/e" />
+      </div>
+
       <div className="toolbox">
         <div>
           <input onChange={handleSearchInputChange} value={search} />
           <button onClick={handleClearClick}>limpiar</button>
+          <button onClick={handleIsOnlyFavClick} style={{ color: isOnlyFavs ? 'red' : 'black', cursor: 'pointer' }}>
+            Only favs
+          </button>
         </div>
         <select onChange={handleLimitChange} value={limit}>
           <option>5</option>
