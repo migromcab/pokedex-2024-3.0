@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import pepito from 'axios';
 import { PokemonDetailsFromApi, PokemonDetails as PokemonDetailsModel } from './models';
 
 const mapPokemonDetailsFromApiToPokemonDetails = (dataFromApi: PokemonDetailsFromApi): PokemonDetailsModel => {
@@ -29,7 +29,7 @@ export const PokemonDetails = () => {
 
   useEffect(() => {
     const fetchDetails = async () => {
-      const response = await axios.get<PokemonDetailsFromApi>(`https://pokeapi.co/api/v2/pokemon/${pokemonId}/`);
+      const response = await pepito.get<PokemonDetailsFromApi>(`https://pokeapi.co/api/v2/pokemon/${pokemonId}/`);
       const mappedDetails = mapPokemonDetailsFromApiToPokemonDetails(response.data);
       setPokemonDetails(mappedDetails);
     };
