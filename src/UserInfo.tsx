@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useState } from 'react';
-import { UserContext } from './UserContextProvider';
+import { UserContext } from './contexts/UserContextProvider';
 
 export const UserInfo = () => {
   const [name, setName] = useState('');
@@ -14,7 +14,7 @@ export const UserInfo = () => {
   };
 
   return (
-    <div>
+    <div className="mb-2">
       {isSignedIn ? (
         <strong>{username}</strong>
       ) : (

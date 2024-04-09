@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MouseEvent, useContext } from 'react';
-import { UserContext } from '../../UserContextProvider';
+import { UserContext } from '../../contexts/UserContextProvider';
 import { PokemonListItem } from '../../models';
 import './pokemon-list.css';
 

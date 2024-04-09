@@ -1,6 +1,6 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { Menu } from './Menu';
-import { UserContextProvider } from './UserContextProvider';
+import { UserContextProvider } from './contexts/UserContextProvider';
 import { UserInfo } from './UserInfo';
 
 export const App = () => {

@@ -72,4 +72,9 @@ a {
 .toolbox {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mb-2 {
+  margin-bottom: 12px;
 }

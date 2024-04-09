@@ -1,65 +1,16 @@
-import { useState, useEffect, useMemo, ChangeEvent, useCallback } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { NewFeatureAlert } from '../../NewFeatureAlert';
-import axios from 'axios';
-import { orderBy } from 'lodash';
-import { PokemonListItem } from '../../models';
+import { PokemonGender, PokemonListItem } from '../../models';
 import { PokemonListItemDetails } from './PokemonListItemDetails';
-import { mapPokemonApiToPokemonView } from './pokemon.mapper';
+import { usePokemonList } from './usePokemonList';
 import './pokemon-list.css';
 
+const TAGS = ['rojo', '4 patas', 'agresivo', 'pasivo', 'carnivoro', 'hervíboro', 'alemán', 'De los Urrutias'];
+
 export const PokemonList = () => {
-  const [search, setSearch] = useState('');
-  const [limit, setLimit] = useState(50);
-  const [isOnlyFavs, setIsOnlyFavs] = useState(false);
-  const [pokemons, setPokemons] = useState<PokemonListItem[]>([]);
+  const { filteredPokemon, isOnlyFavs, limit, pokemons, search, setIsOnlyFavs, setLimit, setPokemons, setSearch } =
+    usePokemonList();
   const [hasDiscoveredFav, setHasDiscoveredFav] = useState(false);
-
-  // Necesitamos saber si el usuario ha hecho click alguna vez en algún pokemon
-  // Podríamos ver si hay algún pokemon marcado como fav
-
-  const filteredPokemon = useMemo(() => {
-    const filtered = pokemons.filter((pokemon) => {
-      if (pokemon.isHidden) {
-        return false;
-      }
-
-      if (isOnlyFavs && !pokemon.isFav) {
-        return false;
-      }
-
-      if (!search) {
-        return true;
-      }
-
-      const searchId = Number(search);
-
-      if (Number.isNaN(searchId)) {
-        return pokemon.name.includes(search);
-      }
-
-      return pokemon.id === searchId;
-    });
-
-    if (!search) {
-      return filtered;
-    }
-
-    return orderBy(filtered, ['isFav', 'name'], ['desc', 'asc']);
-  }, [search, pokemons, isOnlyFavs]);
-
-  const queryParams = useMemo(() => {
-    return { limit, type: 'bicho' };
-  }, [limit]);
-
-  const fetchPokemons = useCallback(async () => {
-    const apiURL = `https://pokeapi.co/api/v2/pokemon?limit=${queryParams.limit}`;
-    const response = await axios.get(apiURL);
-    setPokemons(mapPokemonApiToPokemonView(response.data.results));
-  }, [queryParams]);
-
-  useEffect(() => {
-    fetchPokemons();
-  }, [fetchPokemons]);
 
   const handlePokemonClick = (pokemonId: number) => {
     setHasDiscoveredFav(true);
@@ -111,7 +62,10 @@ export const PokemonList = () => {
     <div>
       <div className="toolbox">
         <div>
-          <input onChange={handleSearchInputChange} value={search} />
+          <input placeholder="min price" />
+          <input placeholder="max price" />
+
+          <input onChange={handleSearchInputChange} value={search} placeholder="Buscar por nombre" />
           <button onClick={handleClearClick}>limpiar</button>
           <button onClick={handleIsOnlyFavClick} style={{ color: isOnlyFavs ? 'red' : 'black', cursor: 'pointer' }}>
             Only favs
@@ -125,6 +79,22 @@ export const PokemonList = () => {
           <option>500</option>
           <option value="5000">Todos</option>
         </select>
+      </div>
+      <div className="mb-2">
+        {TAGS.map((tag) => (
+          <label key={tag}>
+            <input type="checkbox" />
+            {tag}
+          </label>
+        ))}
+      </div>
+      <div className="mb-2">
+        {Object.values(PokemonGender).map((gender) => (
+          <label key={gender}>
+            <input type="checkbox" />
+            {gender}
+          </label>
+        ))}
       </div>
       <div className="pokemons">
         {!hasDiscoveredFav && <NewFeatureAlert />}
