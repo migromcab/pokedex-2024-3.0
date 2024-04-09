@@ -1,26 +1,11 @@
 import { useState, useEffect, useMemo, ChangeEvent, useCallback } from 'react';
-import { NewFeatureAlert } from './NewFeatureAlert';
+import { NewFeatureAlert } from '../../NewFeatureAlert';
 import axios from 'axios';
 import { orderBy } from 'lodash';
-import { PokemonListItem, PokemonListItemFromApi } from './models';
+import { PokemonListItem } from '../../models';
 import { PokemonListItemDetails } from './PokemonListItemDetails';
+import { mapPokemonApiToPokemonView } from './pokemon.mapper';
 import './pokemon-list.css';
-
-export const getImage = (number: number): string => {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png`;
-};
-
-export const mapPokemonApiToPokemonView = (pokemon: PokemonListItemFromApi[]): PokemonListItem[] => {
-  return pokemon.map((pokemonItem: PokemonListItemFromApi, index: number) => {
-    return {
-      name: pokemonItem.name,
-      imageUrl: getImage(index + 1),
-      id: index + 1,
-      isFav: false,
-      isHidden: false
-    };
-  });
-};
 
 export const PokemonList = () => {
   const [search, setSearch] = useState('');

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { App } from './App';
-import { PokemonList } from './PokemonList';
+import { PokemonList } from './views/pokemon-list/PokemonList';
 import { PokemonDetails } from './PokemonDetails';
 
 export const router = createBrowserRouter([

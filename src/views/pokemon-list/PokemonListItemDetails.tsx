@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MouseEvent, useContext } from 'react';
-import { UserContext } from './UserContextProvider';
-import { PokemonListItem } from './models';
+import { UserContext } from '../../UserContextProvider';
+import { PokemonListItem } from '../../models';
 import './pokemon-list.css';
 
 interface PokemonListItemProps {
@@ -43,6 +43,9 @@ export const PokemonListItemDetails = (props: PokemonListItemProps) => {
       <div className="pokemon">
         <img src={pokemon.imageUrl} />
         <p>{pokemon.name}</p>
+        <p>{pokemon.tags.join(', ')}</p>
+        <strong>{pokemon.price}€</strong>
+        <p>{pokemon.gender}</p>
         <i
           className="fa fa-heart"
           onClick={handleFavClick}
