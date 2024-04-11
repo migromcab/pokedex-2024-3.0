@@ -2,13 +2,11 @@ import { useState, ChangeEvent } from 'react';
 import { NewFeatureAlert } from '../../NewFeatureAlert';
 import { PokemonGender, PokemonListItem } from '../../models';
 import { PokemonListItemDetails } from './PokemonListItemDetails';
-import { usePokemonList } from './usePokemonList';
+import { DEFAULT_FILTERS, usePokemonList } from './usePokemonList';
 import './pokemon-list.css';
 
-const TAGS = ['rojo', '4 patas', 'agresivo', 'pasivo', 'carnivoro', 'hervíboro', 'alemán', 'De los Urrutias'];
-
 export const PokemonList = () => {
-  const { filteredPokemon, isOnlyFavs, limit, pokemons, search, setIsOnlyFavs, setLimit, setPokemons, setSearch } =
+  const { tagsAvailable, filteredPokemon, limit, pokemons, setLimit, setPokemons, filters, setFilters } =
     usePokemonList();
   const [hasDiscoveredFav, setHasDiscoveredFav] = useState(false);
 
@@ -43,11 +41,11 @@ export const PokemonList = () => {
   };
 
   const handleSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
+    setFilters((state) => ({ ...state, search: event.target.value }));
   };
 
   const handleClearClick = () => {
-    setSearch('');
+    setFilters(DEFAULT_FILTERS);
   };
 
   const handleLimitChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -55,22 +53,50 @@ export const PokemonList = () => {
   };
 
   const handleIsOnlyFavClick = () => {
-    setIsOnlyFavs(!isOnlyFavs);
+    setFilters((state) => ({ ...state, isOnlyFavs: !filters.isOnlyFavs }));
+  };
+
+  const handleOnTagChanged = (isSelected: boolean, tag: string) => {
+    const { tags = [] } = filters;
+    const newTags = [...tags];
+
+    if (isSelected) {
+      newTags.push(tag);
+    } else {
+      const index = tags.indexOf(tag);
+
+      newTags.splice(index, 1);
+    }
+
+    setFilters((state) => ({ ...state, tags: newTags }));
+  };
+
+  const handleOnGenderChange = (isSelected: boolean, genderChanged: PokemonGender) => {
+    const { gender = [] } = filters;
+    const newGender = [...gender];
+
+    if (isSelected) {
+      newGender.push(genderChanged);
+    } else {
+      const index = gender.indexOf(genderChanged);
+
+      newGender.splice(index, 1);
+    }
+
+    setFilters((state) => ({ ...state, gender: newGender }));
+  };
+
+  const handleMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilters((prevFilters) => ({ ...prevFilters, minPrice: Number(event.target.value) }));
+  };
+
+  const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilters((prevFilters) => ({ ...prevFilters, maxPrice: Number(event.target.value) }));
   };
 
   return (
-    <div>
-      <div className="toolbox">
-        <div>
-          <input placeholder="min price" />
-          <input placeholder="max price" />
-
-          <input onChange={handleSearchInputChange} value={search} placeholder="Buscar por nombre" />
-          <button onClick={handleClearClick}>limpiar</button>
-          <button onClick={handleIsOnlyFavClick} style={{ color: isOnlyFavs ? 'red' : 'black', cursor: 'pointer' }}>
-            Only favs
-          </button>
-        </div>
+    <>
+      <div className="mt-10 mb-10 flex justify-end">
         <select onChange={handleLimitChange} value={limit}>
           <option>5</option>
           <option>50</option>
@@ -80,33 +106,64 @@ export const PokemonList = () => {
           <option value="5000">Todos</option>
         </select>
       </div>
-      <div className="mb-2">
-        {TAGS.map((tag) => (
-          <label key={tag}>
-            <input type="checkbox" />
-            {tag}
-          </label>
-        ))}
+      <div className="flex  gap-10">
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <input placeholder="min price" type="number" value={filters.minPrice} onChange={handleMinPriceChange} />
+            <input placeholder="max price" type="number" value={filters.maxPrice} onChange={handleMaxPriceChange} />
+          </div>
+          <input onChange={handleSearchInputChange} value={filters.search} placeholder="Buscar por nombre" />
+
+          <div className="mb-2">
+            <p className="font-bold">Tags</p>
+            <div className="flex flex-wrap gap-4">
+              {tagsAvailable.map((tag) => (
+                <label key={tag} className="flex gap-3">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(filters.tags?.includes(tag))}
+                    onChange={(event) => handleOnTagChanged(event.target.checked, tag)}
+                  />
+                  {tag}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="mb-2">
+            <p className="font-bold">Gender</p>
+            <div className="flex flex-wrap gap-4">
+              {Object.values(PokemonGender).map((gender) => (
+                <label key={gender}>
+                  <input
+                    type="checkbox"
+                    className="mr-2"
+                    onChange={(event) => handleOnGenderChange(event.target.checked, gender)}
+                  />
+                  {gender}
+                </label>
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={handleIsOnlyFavClick}
+            style={{ color: filters.isOnlyFavs ? 'red' : 'black', cursor: 'pointer' }}
+          >
+            Only favs
+          </button>
+          <button onClick={handleClearClick}>limpiar</button>
+        </div>
+        <div className="pokemons">
+          {!hasDiscoveredFav && <NewFeatureAlert />}
+          {filteredPokemon.map((pokemon: PokemonListItem) => (
+            <PokemonListItemDetails
+              key={pokemon.id}
+              pokemon={pokemon}
+              onFavPokemonClick={handlePokemonClick}
+              onHidePokemonClick={handleHidePokemonClick}
+            />
+          ))}
+        </div>
       </div>
-      <div className="mb-2">
-        {Object.values(PokemonGender).map((gender) => (
-          <label key={gender}>
-            <input type="checkbox" />
-            {gender}
-          </label>
-        ))}
-      </div>
-      <div className="pokemons">
-        {!hasDiscoveredFav && <NewFeatureAlert />}
-        {filteredPokemon.map((pokemon: PokemonListItem) => (
-          <PokemonListItemDetails
-            key={pokemon.id}
-            pokemon={pokemon}
-            onFavPokemonClick={handlePokemonClick}
-            onHidePokemonClick={handleHidePokemonClick}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   );
 };

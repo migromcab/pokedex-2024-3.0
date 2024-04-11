@@ -1,21 +1,83 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { PokemonListItem } from '../../models';
+import { PokemonGender, PokemonListItem, PokemonListItemFromApi } from '../../models';
 import { orderBy } from 'lodash';
 import { mapPokemonApiToPokemonView } from './pokemon.mapper';
 import axios from 'axios';
 
+export interface PokemonFilters {
+  minPrice: number;
+  maxPrice: number;
+  search?: string;
+  tags?: string[];
+  gender?: PokemonGender[];
+  isOnlyFavs?: boolean;
+}
+
+export const DEFAULT_FILTERS: PokemonFilters = {
+  minPrice: 0,
+  maxPrice: 1000
+};
+
+const matchesTagFilter = (pokemon: PokemonListItem, tags: string[] = []) => {
+  if (!tags.length) {
+    return true;
+  }
+
+  return pokemon.tags.some((tag) => {
+    return tags.includes(tag);
+  });
+};
+
+const matchesGenderFilter = (pokemon: PokemonListItem, genders: string[] = []) => {
+  if (!genders.length) {
+    return true;
+  }
+
+  return genders.includes(pokemon.gender);
+};
+
 export const usePokemonList = () => {
-  const [search, setSearch] = useState('');
   const [limit, setLimit] = useState(50);
-  const [isOnlyFavs, setIsOnlyFavs] = useState(false);
   const [pokemons, setPokemons] = useState<PokemonListItem[]>([]);
+  const [filters, setFilters] = useState<PokemonFilters>(DEFAULT_FILTERS);
 
   // Necesitamos saber si el usuario ha hecho click alguna vez en algún pokemon
   // Podríamos ver si hay algún pokemon marcado como fav
+  const tagsAvailable = useMemo(() => {
+    const arrayMapping: Record<string, boolean> = {};
+
+    pokemons.forEach((pokemon) => {
+      pokemon.tags.forEach((tag) => {
+        arrayMapping[tag] = true;
+      });
+    });
+
+    return Object.keys(arrayMapping);
+  }, [pokemons]);
 
   const filteredPokemon = useMemo(() => {
+    const {
+      isOnlyFavs,
+      search,
+      tags: tagsFromFilters = [],
+      gender: genderFromFilters = [],
+      minPrice,
+      maxPrice
+    } = filters;
     const filtered = pokemons.filter((pokemon) => {
       if (pokemon.isHidden) {
+        return false;
+      }
+
+      if (pokemon.price < minPrice || pokemon.price > maxPrice) {
+        return false;
+      }
+
+      if (!matchesTagFilter(pokemon, tagsFromFilters)) {
+        return false;
+      }
+
+      if (!matchesGenderFilter(pokemon, genderFromFilters)) {
         return false;
       }
 
@@ -41,7 +103,7 @@ export const usePokemonList = () => {
     }
 
     return orderBy(filtered, ['isFav', 'name'], ['desc', 'asc']);
-  }, [search, pokemons, isOnlyFavs]);
+  }, [filters, pokemons]);
 
   const queryParams = useMemo(() => {
     return { limit, type: 'bicho' };
@@ -58,14 +120,13 @@ export const usePokemonList = () => {
   }, [fetchPokemons]);
 
   return {
-    search,
-    setSearch,
     limit,
     setLimit,
-    isOnlyFavs,
-    setIsOnlyFavs,
     pokemons,
     setPokemons,
-    filteredPokemon
+    filteredPokemon,
+    filters,
+    setFilters,
+    tagsAvailable
   };
 };
