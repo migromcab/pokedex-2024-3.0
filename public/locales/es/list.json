@@ -1,0 +1,16 @@
+{
+  "all": "Toda la lista",
+  "filters": {
+    "tags": "Etiquetas",
+    "searchPlaceholder": "Buscar por nombre",
+    "gender": "Género",
+    "genderOptions": {
+      "male": "Macho",
+      "female": "Hembra",
+      "others": "Otro"
+    }
+  },
+  "pluralizationExample_zero": "Ningún filtro aplicado",
+  "pluralizationExample": "{{count}} filtro aplicado",
+  "pluralizationExample_other": "{{count}} filtros aplicados"
+}

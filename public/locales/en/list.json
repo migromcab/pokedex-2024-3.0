@@ -1,0 +1,16 @@
+{
+  "all": "All list",
+  "filters": {
+    "tags": "Tags",
+    "searchPlaceholder": "Search by name",
+    "gender": "Gender",
+    "genderOptions": {
+      "male": "Male",
+      "female": "Female",
+      "others": "Others"
+    }
+  },
+  "pluralizationExample_zero": "No filters applied",
+  "pluralizationExample_one": "{{count}} filter applied",
+  "pluralizationExample_other": "{{count}} filters applied"
+}

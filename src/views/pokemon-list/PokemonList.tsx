@@ -3,11 +3,14 @@ import { NewFeatureAlert } from '../../NewFeatureAlert';
 import { PokemonGender, PokemonListItem } from '../../models';
 import { PokemonListItemDetails } from './PokemonListItemDetails';
 import { DEFAULT_FILTERS, usePokemonList } from './usePokemonList';
+import { useTranslation } from 'react-i18next';
 import './pokemon-list.css';
 
 export const PokemonList = () => {
   const { tagsAvailable, filteredPokemon, limit, pokemons, setLimit, setPokemons, filters, setFilters } =
     usePokemonList();
+  const { t, i18n } = useTranslation(['list', 'common']);
+
   const [hasDiscoveredFav, setHasDiscoveredFav] = useState(false);
 
   const handlePokemonClick = (pokemonId: number) => {
@@ -97,13 +100,16 @@ export const PokemonList = () => {
   return (
     <>
       <div className="mt-10 mb-10 flex justify-end">
+        {t('list:pluralizationExample', { count: filters.tags?.length ?? 0 })}
+
+        {/* <button onClick={() => i18n.changeLanguage('es')}>Change to spanish</button> */}
         <select onChange={handleLimitChange} value={limit}>
           <option>5</option>
           <option>50</option>
           <option>100</option>
           <option>250</option>
           <option>500</option>
-          <option value="5000">Todos</option>
+          <option value="5000">{t('list:all')}</option>
         </select>
       </div>
       <div className="flex  gap-10">
@@ -112,10 +118,14 @@ export const PokemonList = () => {
             <input placeholder="min price" type="number" value={filters.minPrice} onChange={handleMinPriceChange} />
             <input placeholder="max price" type="number" value={filters.maxPrice} onChange={handleMaxPriceChange} />
           </div>
-          <input onChange={handleSearchInputChange} value={filters.search} placeholder="Buscar por nombre" />
+          <input
+            onChange={handleSearchInputChange}
+            value={filters.search}
+            placeholder={t('list:filters.searchPlaceholder')}
+          />
 
           <div className="mb-2">
-            <p className="font-bold">Tags</p>
+            <p className="font-bold">{t('list:filters.tags')}</p>
             <div className="flex flex-wrap gap-4">
               {tagsAvailable.map((tag) => (
                 <label key={tag} className="flex gap-3">
@@ -139,7 +149,7 @@ export const PokemonList = () => {
                     className="mr-2"
                     onChange={(event) => handleOnGenderChange(event.target.checked, gender)}
                   />
-                  {gender}
+                  {t(`list:filters.genderOptions.${gender}`)}
                 </label>
               ))}
             </div>
