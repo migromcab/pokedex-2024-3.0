@@ -1,14 +1,17 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useRef } from 'react';
 import { NewFeatureAlert } from '../../NewFeatureAlert';
 import { PokemonGender, PokemonListItem } from '../../models';
 import { PokemonListItemDetails } from './PokemonListItemDetails';
-import { DEFAULT_FILTERS, usePokemonList } from './usePokemonList';
+import { usePokemonList } from './usePokemonList';
+import { DEFAULT_FILTERS } from './pokemonListReducer';
 import { useTranslation } from 'react-i18next';
 import './pokemon-list.css';
 
 export const PokemonList = () => {
   const { tagsAvailable, filteredPokemon, limit, pokemons, setLimit, setPokemons, filters, setFilters } =
     usePokemonList();
+  const myRef = useRef();
+
   const { t, i18n } = useTranslation(['list', 'common']);
 
   const [hasDiscoveredFav, setHasDiscoveredFav] = useState(false);
@@ -44,7 +47,7 @@ export const PokemonList = () => {
   };
 
   const handleSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFilters((state) => ({ ...state, search: event.target.value }));
+    // setFilters((state) => ({ ...state, search: event.target.value }));
   };
 
   const handleClearClick = () => {
@@ -56,7 +59,7 @@ export const PokemonList = () => {
   };
 
   const handleIsOnlyFavClick = () => {
-    setFilters((state) => ({ ...state, isOnlyFavs: !filters.isOnlyFavs }));
+    setFilters({ ...filters, isOnlyFavs: !filters.isOnlyFavs });
   };
 
   const handleOnTagChanged = (isSelected: boolean, tag: string) => {
@@ -71,7 +74,7 @@ export const PokemonList = () => {
       newTags.splice(index, 1);
     }
 
-    setFilters((state) => ({ ...state, tags: newTags }));
+    // setFilters((state) => ({ ...state, tags: newTags }));
   };
 
   const handleOnGenderChange = (isSelected: boolean, genderChanged: PokemonGender) => {
@@ -86,15 +89,15 @@ export const PokemonList = () => {
       newGender.splice(index, 1);
     }
 
-    setFilters((state) => ({ ...state, gender: newGender }));
+    // setFilters((state) => ({ ...state, gender: newGender }));
   };
 
   const handleMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFilters((prevFilters) => ({ ...prevFilters, minPrice: Number(event.target.value) }));
+    // setFilters((prevFilters) => ({ ...prevFilters, minPrice: Number(event.target.value) }));
   };
 
   const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFilters((prevFilters) => ({ ...prevFilters, maxPrice: Number(event.target.value) }));
+    // setFilters((prevFilters) => ({ ...prevFilters, maxPrice: Number(event.target.value) }));
   };
 
   return (
@@ -112,6 +115,7 @@ export const PokemonList = () => {
           <option value="5000">{t('list:all')}</option>
         </select>
       </div>
+      <div></div>
       <div className="flex  gap-10">
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">

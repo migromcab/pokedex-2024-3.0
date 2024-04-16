@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import pepito from 'axios';
 import { PokemonDetailsFromApi, PokemonDetails as PokemonDetailsModel } from './models';
@@ -25,16 +25,30 @@ const mapPokemonDetailsFromApiToPokemonDetails = (dataFromApi: PokemonDetailsFro
 
 export const PokemonDetails = () => {
   const [pokemonDetails, setPokemonDetails] = useState<PokemonDetailsModel>();
+  const isMounted = useRef(true);
   const { pokemonId } = useParams();
 
   useEffect(() => {
     const fetchDetails = async () => {
+      console.log('llamando a la api');
       const response = await pepito.get<PokemonDetailsFromApi>(`https://pokeapi.co/api/v2/pokemon/${pokemonId}/`);
       const mappedDetails = mapPokemonDetailsFromApiToPokemonDetails(response.data);
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      if (!isMounted.current) {
+        console.log('sa morio');
+        return;
+      }
       setPokemonDetails(mappedDetails);
     };
 
     fetchDetails();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      console.log('Me estoy muriendo');
+      isMounted.current = false;
+    };
   }, []);
 
   if (!pokemonDetails) {

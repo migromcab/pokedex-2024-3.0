@@ -69,6 +69,17 @@ a {
   padding: 20px;
 }
 
+.menu-wrapper {
+  height: 74px;
+}
+
+.menu--fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
 .input-searcher {
   border: none;
   padding: 16px;

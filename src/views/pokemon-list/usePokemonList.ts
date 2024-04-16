@@ -1,22 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { PokemonGender, PokemonListItem, PokemonListItemFromApi } from '../../models';
+import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { PokemonListItem } from '../../models';
 import { orderBy } from 'lodash';
 import { mapPokemonApiToPokemonView } from './pokemon.mapper';
 import axios from 'axios';
-
-export interface PokemonFilters {
-  minPrice: number;
-  maxPrice: number;
-  search?: string;
-  tags?: string[];
-  gender?: PokemonGender[];
-  isOnlyFavs?: boolean;
-}
-
-export const DEFAULT_FILTERS: PokemonFilters = {
-  minPrice: 0,
-  maxPrice: 1000
-};
+import { INITIAL_STATE, pokemonListReducer } from './pokemonListReducer';
+import { PokemonFilters, PokemonListActionTypes } from './pokemon-list.models';
 
 const matchesTagFilter = (pokemon: PokemonListItem, tags: string[] = []) => {
   if (!tags.length) {
@@ -37,23 +25,22 @@ const matchesGenderFilter = (pokemon: PokemonListItem, genders: string[] = []) =
 };
 
 export const usePokemonList = () => {
-  const [limit, setLimit] = useState(50);
-  const [pokemons, setPokemons] = useState<PokemonListItem[]>([]);
-  const [filters, setFilters] = useState<PokemonFilters>(DEFAULT_FILTERS);
+  const [pokemonListState, pokemonListDispatch] = useReducer(pokemonListReducer, INITIAL_STATE);
+  const { limit, list, filters } = pokemonListState;
 
   // Necesitamos saber si el usuario ha hecho click alguna vez en algún pokemon
   // Podríamos ver si hay algún pokemon marcado como fav
   const tagsAvailable = useMemo(() => {
     const arrayMapping: Record<string, boolean> = {};
 
-    pokemons.forEach((pokemon) => {
+    list.forEach((pokemon) => {
       pokemon.tags.forEach((tag) => {
         arrayMapping[tag] = true;
       });
     });
 
     return Object.keys(arrayMapping);
-  }, [pokemons]);
+  }, [list]);
 
   const filteredPokemon = useMemo(() => {
     const {
@@ -64,7 +51,7 @@ export const usePokemonList = () => {
       minPrice,
       maxPrice
     } = filters;
-    const filtered = pokemons.filter((pokemon) => {
+    const filtered = list.filter((pokemon) => {
       if (pokemon.isHidden) {
         return false;
       }
@@ -103,7 +90,7 @@ export const usePokemonList = () => {
     }
 
     return orderBy(filtered, ['isFav', 'name'], ['desc', 'asc']);
-  }, [filters, pokemons]);
+  }, [filters, list]);
 
   const queryParams = useMemo(() => {
     return { limit, type: 'bicho' };
@@ -112,7 +99,10 @@ export const usePokemonList = () => {
   const fetchPokemons = useCallback(async () => {
     const apiURL = `https://pokeapi.co/api/v2/pokemon?limit=${queryParams.limit}`;
     const response = await axios.get(apiURL);
-    setPokemons(mapPokemonApiToPokemonView(response.data.results));
+    pokemonListDispatch({
+      type: PokemonListActionTypes.Receive,
+      payload: mapPokemonApiToPokemonView(response.data.results)
+    });
   }, [queryParams]);
 
   useEffect(() => {
@@ -121,12 +111,24 @@ export const usePokemonList = () => {
 
   return {
     limit,
-    setLimit,
-    pokemons,
-    setPokemons,
+    setLimit: (newLimit: number) =>
+      pokemonListDispatch({
+        type: PokemonListActionTypes.ChangeLimit,
+        payload: newLimit
+      }),
+    pokemons: list,
+    setPokemons: (pokemon: PokemonListItem[]) =>
+      pokemonListDispatch({
+        type: PokemonListActionTypes.Receive,
+        payload: pokemon
+      }),
     filteredPokemon,
     filters,
-    setFilters,
+    setFilters: (filters: PokemonFilters) =>
+      pokemonListDispatch({
+        type: PokemonListActionTypes.Filter,
+        payload: filters
+      }),
     tagsAvailable
   };
 };

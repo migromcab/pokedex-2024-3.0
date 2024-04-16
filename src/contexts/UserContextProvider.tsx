@@ -19,7 +19,7 @@ interface UserContextProviderProps {
   children: ReactNode;
 }
 
-export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
+export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element | null => {
   const [username, setUsername] = useState<string>();
 
   const contextValue = {
@@ -27,5 +27,6 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
     signIn: setUsername,
     isSignedIn: Boolean(username)
   };
+
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>;
 };
