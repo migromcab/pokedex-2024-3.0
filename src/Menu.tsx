@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
+import { Button } from './components/button/Button';
 
 export const Menu = () => {
   const { i18n } = useTranslation();
@@ -34,12 +35,17 @@ export const Menu = () => {
     <div ref={menuNode} className="menu-wrapper">
       <div className={`menu ${isMenuFixed ? 'menu--fixed' : ''}`}>
         <div className="flex gap-3">
-          <button className={i18n.language === 'es' ? 'font-bold' : ''} onClick={() => i18n.changeLanguage('es')}>
+          <Button
+            block
+            disabled
+            className={i18n.language === 'es' ? 'font-bold' : ''}
+            onClick={() => i18n.changeLanguage('es')}
+          >
             Español
-          </button>
-          <button className={i18n.language === 'en' ? 'font-bold' : ''} onClick={() => i18n.changeLanguage('en')}>
+          </Button>
+          <Button className={i18n.language === 'en' ? 'font-bold' : ''} onClick={() => i18n.changeLanguage('en')}>
             Inglés
-          </button>
+          </Button>
         </div>
         <div className="flex gap-3">
           <NavLink to="/">Listado</NavLink>
