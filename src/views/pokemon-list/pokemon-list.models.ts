@@ -13,6 +13,8 @@ export interface PokemonListReducerState {
   limit: number;
   list: PokemonListItem[];
   filters: PokemonFilters;
+  tagsAvailable: string[];
+  filteredList: PokemonListItem[];
 }
 
 // cambiar el limite

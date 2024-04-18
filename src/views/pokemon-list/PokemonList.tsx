@@ -10,9 +10,8 @@ import './pokemon-list.css';
 export const PokemonList = () => {
   const { tagsAvailable, filteredPokemon, limit, pokemons, setLimit, setPokemons, filters, setFilters } =
     usePokemonList();
-  const myRef = useRef();
 
-  const { t, i18n } = useTranslation(['list', 'common']);
+  const { t } = useTranslation(['list', 'common']);
 
   const [hasDiscoveredFav, setHasDiscoveredFav] = useState(false);
 
