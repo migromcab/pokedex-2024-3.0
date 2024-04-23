@@ -1,4 +1,5 @@
-import { useState, ChangeEvent, useRef } from 'react';
+import { useState, ChangeEvent, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { NewFeatureAlert } from '../../NewFeatureAlert';
 import { PokemonGender, PokemonListItem } from '../../models';
 import { PokemonListItemDetails } from './PokemonListItemDetails';
@@ -8,8 +9,22 @@ import { useTranslation } from 'react-i18next';
 import './pokemon-list.css';
 
 export const PokemonList = () => {
+  const [params] = useSearchParams();
+  const searchFromParam = params.get('search');
+  const prevSearchFromParam = useRef('');
   const { tagsAvailable, filteredPokemon, limit, pokemons, setLimit, setPokemons, filters, setFilters } =
     usePokemonList();
+
+  useEffect(() => {
+    if (searchFromParam === null) {
+      return;
+    }
+
+    if (prevSearchFromParam.current !== searchFromParam) {
+      setFilters({ ...filters, search: searchFromParam ?? '' });
+      prevSearchFromParam.current = searchFromParam;
+    }
+  }, [searchFromParam, setFilters]);
 
   const { t } = useTranslation(['list', 'common']);
 
@@ -46,7 +61,7 @@ export const PokemonList = () => {
   };
 
   const handleSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    // setFilters((state) => ({ ...state, search: event.target.value }));
+    setFilters({ ...filters, search: event.target.value });
   };
 
   const handleClearClick = () => {

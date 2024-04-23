@@ -1,8 +1,8 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import classNames from 'classnames';
+import './buttons.scss';
 
 export type ButtonSizes = 'sm' | 'md' | 'lg';
-
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSizes;

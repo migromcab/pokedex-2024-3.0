@@ -29,7 +29,3 @@ export const IconButton = ({ icon, muyBello, className = '', children, ...rest }
     </Button>
   );
 };
-
-const T = () => {
-  return <IconButton icon={<>esto es un icono</>}>;
-};

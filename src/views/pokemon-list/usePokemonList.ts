@@ -26,6 +26,15 @@ export const usePokemonList = () => {
     fetchPokemons();
   }, [fetchPokemons]);
 
+  const setFilters = useCallback(
+    (filters: PokemonFilters) =>
+      pokemonListDispatch({
+        type: PokemonListActionTypes.Filter,
+        payload: filters
+      }),
+    []
+  );
+
   return {
     limit,
     setLimit: (newLimit: number) =>
@@ -41,11 +50,7 @@ export const usePokemonList = () => {
       }),
     filteredPokemon: filteredList,
     filters,
-    setFilters: (filters: PokemonFilters) =>
-      pokemonListDispatch({
-        type: PokemonListActionTypes.Filter,
-        payload: filters
-      }),
+    setFilters,
     tagsAvailable
   };
 };

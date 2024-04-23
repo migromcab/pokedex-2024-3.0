@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, createSearchParams } from 'react-router-dom';
 import { Button } from './components/button/Button';
 
 export const Menu = () => {
   const { i18n } = useTranslation();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState('');
   const [isMenuFixed, setIsMenuFixed] = useState(false);
   const menuNode = useRef<HTMLDivElement>(null);
 
@@ -47,6 +49,14 @@ export const Menu = () => {
             Inglés
           </Button>
         </div>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            navigate(`/?search=${search}`);
+          }}
+        >
+          <input placeholder="Search pokemons" value={search} onChange={(event) => setSearch(event.target.value)} />
+        </form>
         <div className="flex gap-3">
           <NavLink to="/">Listado</NavLink>
           <NavLink to="/terms-and-conditions">Términos y condiciones</NavLink>
