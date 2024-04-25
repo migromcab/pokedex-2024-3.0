@@ -6,11 +6,13 @@ import { PokemonListItemDetails } from './PokemonListItemDetails';
 import { usePokemonList } from './usePokemonList';
 import { DEFAULT_FILTERS } from './pokemonListReducer';
 import { useTranslation } from 'react-i18next';
+import { Dialog } from '../../components/dialog/Dialog';
 import './pokemon-list.css';
 
 export const PokemonList = () => {
   const [params] = useSearchParams();
   const searchFromParam = params.get('search');
+  const [show, setShow] = useState(false);
   const prevSearchFromParam = useRef('');
   const { tagsAvailable, filteredPokemon, limit, pokemons, setLimit, setPokemons, filters, setFilters } =
     usePokemonList();
@@ -115,7 +117,7 @@ export const PokemonList = () => {
   };
 
   return (
-    <>
+    <div className="list">
       <div className="mt-10 mb-10 flex justify-end">
         {t('list:pluralizationExample', { count: filters.tags?.length ?? 0 })}
 
@@ -192,6 +194,6 @@ export const PokemonList = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };

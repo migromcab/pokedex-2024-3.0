@@ -19,7 +19,6 @@ interface IconButtonProps extends IconBonitoProps, Pick<ButtonProps, 'block' | '
 export const IconButton = ({ icon, muyBello, className = '', children, ...rest }: IconButtonProps) => {
   const classes = classNames({
     'btn--icon': true,
-    'btn--muy-bello': muyBello,
     [className]: className
   });
   return (

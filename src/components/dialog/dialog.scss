@@ -1,0 +1,49 @@
+.dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &,
+  &-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+  }
+
+  &-overlay {
+    background: #0000009e;
+    z-index: 1000;
+  }
+
+  &__content {
+    padding: 24px;
+    width: 100%;
+    z-index: 10000;
+
+    &--xs {
+      max-width: 450px;
+    }
+
+    &--sm {
+      max-width: 600px;
+    }
+
+    &--md {
+      max-width: 800px;
+    }
+  }
+
+  &__close {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background: #000;
+    color: #fff;
+    position: absolute;
+    /* left: 0; */
+    right: 24px;
+    top: 24px;
+  }
+}

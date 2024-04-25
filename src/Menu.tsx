@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, useNavigate, createSearchParams } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from './components/button/Button';
+import { Dialog } from './components/dialog/Dialog';
+import { SignUp } from './views/auth/SignUp';
 
 export const Menu = () => {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
+  const [showSignUp, setShowSignUp] = useState(false);
   const [search, setSearch] = useState('');
   const [isMenuFixed, setIsMenuFixed] = useState(false);
   const menuNode = useRef<HTMLDivElement>(null);
@@ -57,12 +60,24 @@ export const Menu = () => {
         >
           <input placeholder="Search pokemons" value={search} onChange={(event) => setSearch(event.target.value)} />
         </form>
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           <NavLink to="/">Listado</NavLink>
-          <NavLink to="/terms-and-conditions">Términos y condiciones</NavLink>
-          <NavLink to="/privacy">Privacy</NavLink>
+          <Button
+            size="sm"
+            onClick={() => {
+              setShowSignUp(true);
+            }}
+          >
+            Sign up
+          </Button>
         </div>
       </div>
+      <SignUp
+        isOpen={showSignUp}
+        close={() => {
+          setShowSignUp(false);
+        }}
+      />
     </div>
   );
 };
