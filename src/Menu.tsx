@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from './components/button/Button';
-import { Dialog } from './components/dialog/Dialog';
 import { SignUp } from './views/auth/SignUp';
 
 export const Menu = () => {
